@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闡述設計理念匯報</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #ecf0f1;
+            --accent: #e74c3c;
+            --highlight: #3498db;
+            --text-dark: #333;
+            --border: #bdc3c7;
+            --ppt-theme: #3498db; 
+        }
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        h1 { text-align: center; color: var(--primary); font-size: 32px; border-bottom: 3px solid var(--highlight); padding-bottom: 15px; margin-bottom: 30px;}
+        h2 { color: var(--highlight); border-left: 5px solid var(--accent); padding-left: 10px; }
+        
+        /* 導航與按鈕 */
+        .nav-buttons { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: bold; font-size: 15px;}
+        .btn-home { background-color: #95a5a6; color: white; }
+        .btn-primary { background-color: var(--highlight); color: white; }
+        .btn-accent { background-color: var(--accent); color: white; }
+        .btn-success { background-color: #27ae60; color: white; }
+        .btn-warning { background-color: #f39c12; color: white; }
+        .btn-lock { background-color: #8e44ad; color: white; width: 100%; margin-bottom: 15px; font-size: 16px; padding: 12px;}
+        button:hover { opacity: 0.85; transform: translateY(-2px); }
+
+        /* 視圖切換 */
+        .view-section { display: none; animation: fadeIn 0.4s; }
+        .active-view { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 首頁設計 */
+        .demo-section { text-align: center; margin-bottom: 40px; background: #fdf2e9; padding: 25px; border-radius: 10px; border: 2px dashed var(--accent); cursor: pointer; transition: 0.3s;}
+        .demo-section:hover { background: #fae5d3; }
+        .demo-section img { max-height: 180px; border-radius: 8px; margin-top: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        
+        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-top: 20px; }
+        .gallery-item { cursor: pointer; border: 1px solid var(--border); border-radius: 10px; text-align: center; transition: 0.3s; background: #fff; padding-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .gallery-item:hover { border-color: var(--highlight); transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.1);}
+        .gallery-item img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px 10px 0 0; border-bottom: 1px solid #eee; margin-bottom: 10px;}
+        .gallery-item p { font-weight: bold; font-size: 16px; margin: 5px 0; color: var(--primary); }
+
+        /* 示範區 (Tom Lee) 樣式 */
+        .step-container { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .step-header { background: var(--primary); color: white; padding: 12px 20px; font-size: 18px; font-weight: bold; }
+        .tab-buttons { display: flex; background: #ecf0f1; border-bottom: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-weight: bold; color: #555; cursor: pointer; border-right: 1px solid var(--border); transition: 0.2s;}
+        .tab-btn:last-child { border-right: none; }
+        .tab-btn:hover { background: #dfe6e9; }
+        .tab-btn.active { background: white; color: var(--highlight); border-bottom: 3px solid var(--highlight); }
+        .tab-content { padding: 20px; background: white; min-height: 120px; font-size: 16px; line-height: 1.6; }
+        
+        .tts-btn { background: #27ae60; color: white; padding: 6px 12px; border-radius: 4px; font-size: 14px; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: none;}
+        .tts-btn:hover { background: #2ecc71; }
+
+        /* 實作區佈局 */
+        .workspace { display: flex; gap: 25px; align-items: flex-start; }
+        .editor-panel { flex: 0 0 450px; height: 750px; overflow-y: auto; padding: 20px; border: 1px solid #eee; background: #fafafa; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.02);}
+        .preview-panel { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .reference-panel { flex: 0 0 280px; padding: 15px; background: #fff8ee; border: 1px solid #f39c12; border-radius: 8px; }
+
+        /* 實作區工具列 */
+        .editor-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed #ccc; align-items: center; justify-content: space-between;}
+        .style-tools { display: flex; flex-direction: column; gap: 10px; }
+        .tool-row { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 14px; color: #555; }
+        input[type="color"] { border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; padding: 0; background: none; }
+        select { padding: 5px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; }
+        .action-tools { display: flex; gap: 10px; }
+
+        /* 實作區表單 */
+        .exercise-step { margin-bottom: 25px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--highlight); box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .exercise-step h4 { margin: 0 0 10px 0; color: var(--primary); }
+        .hint-text { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; line-height: 1.4; background: #f0f8ff; padding: 8px; border-radius: 4px;}
+        textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 15px; box-sizing: border-box; height: 110px; resize: vertical; font-family: inherit;}
+
+        /* PPT 預覽基礎樣式 */
+        .slide-container { 
+            width: 100%; aspect-ratio: 16 / 9; background: white; border: 2px solid var(--ppt-theme); 
+            border-radius: 5px; padding: 40px; box-sizing: border-box; position: relative; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .slide-title { font-size: 28px; font-weight: bold; color: var(--ppt-theme); margin-bottom: 20px; border-bottom: 3px solid var(--ppt-theme); padding-bottom: 10px; transition: all 0.3s ease;}
+        .slide-content { font-size: 20px; line-height: 1.6; white-space: pre-wrap; color: #444; flex: 1; overflow-y: auto;}
+        .slide-image { max-height: 220px; display: block; margin: 15px auto; object-fit: contain; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
+        .slide-controls { margin-top: 25px; display: flex; gap: 15px; width: 100%; justify-content: center; align-items: center;}
+
+        /* 主題風格 */
+        .theme-minimalist .warm-dots {
+            position: absolute; width: 60px; height: 60px; background-image: radial-gradient(var(--ppt-theme) 25%, transparent 25%); background-size: 15px 15px; opacity: 0.3; pointer-events: none;
+        }
+        .theme-minimalist .warm-dots.top-right { top: 20px; right: 20px; }
+        .theme-minimalist .warm-dots.bottom-left { bottom: 20px; left: 20px; }
+        .theme-minimalist .minimalist-line { position: absolute; left: 0; top: 0; width: 8px; height: 100%; background-color: var(--ppt-theme); }
+
+        .theme-natural { background: linear-gradient(135deg, #f1f8e9 0%, #e0f2f1 100%); border: 3px solid #81c784; border-radius: 20px; }
+        .theme-natural .slide-title { color: #2e7d32; border-bottom: 2px dashed #81c784; }
+        .theme-natural::before { content: "🌿"; position: absolute; right: 20px; bottom: 20px; font-size: 40px; opacity: 0.5; }
+
+        .theme-comic { background: #fff; border: 5px solid #000; box-shadow: 10px 10px 0px var(--ppt-theme); border-radius: 0; background-image: radial-gradient(#ccc 15%, transparent 16%); background-size: 20px 20px; }
+        .theme-comic .slide-title { background: var(--ppt-theme); color: white; border: 3px solid #000; display: inline-block; padding: 5px 20px; transform: rotate(-2deg); box-shadow: 4px 4px 0px #000; margin-bottom: 25px; border-bottom: 3px solid #000; }
+        .theme-comic .slide-content { background: white; border: 3px solid #000; padding: 15px; border-radius: 10px; box-shadow: 4px 4px 0px #000; }
+        .theme-comic .slide-image { border: 3px solid #000; box-shadow: 5px 5px 0px #000; }
+
+        .theme-fashion { background: #fafafa; border: 1px solid #ddd; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-radius: 0; background-image: linear-gradient(45deg, #fdfbfb 0%, #ebedee 100%); }
+        .theme-fashion .slide-title { color: var(--ppt-theme); text-align: center; border-bottom: 1px solid var(--ppt-theme); letter-spacing: 2px; text-transform: uppercase; padding-bottom: 15px; }
+        .theme-fashion .slide-content { text-align: justify; font-family: serif; color: #555; }
+
+        /* 右側參考區 */
+        .phrase-box { font-size: 14px; color: #d35400; background: #fff; padding: 12px; border: 1px dashed #f39c12; border-radius: 5px; line-height: 1.5; font-weight: bold;}
+        .zoomable { cursor: zoom-in; transition: transform 0.2s; }
+        .zoomable:hover { transform: scale(1.02); }
+
+        /* 模態框通用 */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #555; }
+        
+        #enlargedImg { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); animation: zoomIn 0.3s; }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* 解鎖後的示範區塊 */
+        .locked-step-box { background: #f9f9f9; border-left: 4px solid var(--highlight); padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+        .locked-step-box h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 18px;}
+
+        /* 最終成品區 */
+        .final-grid { display: grid; grid-template-columns: 1fr; gap: 40px; margin-top: 20px; background: #f5f6fa; padding: 30px; border-radius: 10px;}
+        .final-toolbar { text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 15px;}
+        
+        @media print {
+            @page { size: landscape; margin: 0; }
+            body { margin: 0; background: white; }
+            .nav-buttons, .view-section:not(#final-view), .final-toolbar { display: none !important; }
+            #final-view { display: block !important; margin: 0; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; padding: 0; }
+            .final-grid { display: block; background: white; padding: 0; margin: 0; }
+            .slide-container { width: 100vw; height: 100vh; margin: 0; padding: 50px; page-break-after: always; page-break-inside: avoid; border: none !important; box-shadow: none !important; border-radius: 0; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="nav-buttons">
+        <button class="btn-home" onclick="switchView('home-view')">🏠 回到首頁</button>
+        <div id="header-right"></div>
+    </div>
+
+    <div id="home-view" class="view-section active-view">
+        <h1>闡述設計理念匯報</h1>
+        
+        <div class="demo-section" onclick="openDemo()">
+            <h2 style="border:none; color: var(--accent); margin:0; font-size: 26px;">⭐ 通利琴行 (匯報示範) ⭐</h2>
+            <p style="color: #555; margin-top: 5px; font-weight: bold;">選擇紀念品草圖</p>
+            <p style="color: #888; font-size: 14px; margin-top: 0;">(點擊查看完整匯報結構與語音示範)</p>
+            <img src="P1.jpg" alt="通利琴行草圖">
+        </div>
+
+        <h2 style="text-align: center; border: none; color: var(--primary);">選擇紀念品草圖 (開始練習)</h2>
+        <div class="gallery">
+            <script>
+                const items = [
+                    {id: 'P2', name: '愉景灣酒店'}, {id: 'P3', name: '下呂溫泉'},
+                    {id: 'P4', name: '元氣壽司'}, {id: 'P6', name: '運動家'},
+                    {id: 'P7', name: '飛利浦'}, {id: 'P8', name: '戴森 Dyson'}
+                ];
+                items.forEach(item => {
+                    document.write(`
+                        <div class="gallery-item" onclick="startExercise('${item.id}.jpg', '${item.name}')">
+                            <img src="${item.id}.jpg" alt="${item.name}">
+                            <p>${item.name}</p>
+                        </div>
+                    `);
+                });
+            </script>
+        </div>
+    </div>
+
+    <div id="demo-view" class="view-section">
+        <h2>通利琴行：宣傳紀念品設計 (匯報示範)</h2>
+        <p style="margin-bottom: 25px; color: #555;">請依次點擊下方步驟，從思考問題開始，逐步建構你的匯報內容。點擊「組織內容」內的喇叭按鈕可聆聽普通話示範。</p>
+        <div id="demo-steps-container"></div>
+    </div>
+
+    <div id="exercise-view" class="view-section">
+        <h2 id="exercise-title"></h2>
+        <div class="workspace">
+            <div class="editor-panel">
+                <div class="editor-toolbar">
+                    <div class="style-tools">
+                        <div class="tool-row">
+                            🎨 簡報主色：
+                            <input type="color" id="ppt-color-picker" value="#3498db" onchange="updatePPTTheme()">
+                        </div>
+                        <div class="tool-row">
+                            🖼️ 簡報風格：
+                            <select id="ppt-style-picker" onchange="updatePPTTheme()">
+                                <option value="theme-minimalist">簡約風 (預設)</option>
+                                <option value="theme-natural">自然風</option>
+                                <option value="theme-comic">漫畫風</option>
+                                <option value="theme-fashion">時尚風</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="action-tools">
+                        <button class="btn-warning" onclick="saveProgress()">💾 保留</button>
+                        <button class="btn-success" onclick="generateFinal()">✅ 完成</button>
+                    </div>
+                </div>
+
+                <p style="margin-top:0; color:#e74c3c; font-weight:bold;">請依照步驟，填寫你的匯報內容：</p>
+                <div id="exercise-inputs-container"></div>
+            </div>
+
+            <div class="preview-panel">
+                <div id="preview-slide-container" class="slide-container theme-minimalist">
+                    <div class="minimalist-line"></div>
+                    <div class="warm-dots top-right"></div>
+                    <div class="warm-dots bottom-left"></div>
+                    <div id="preview-title" class="slide-title"></div>
+                    <img id="preview-image" class="slide-image zoomable" src="" onclick="openImageModal(this.src)" title="點擊放大">
+                    <div id="preview-content" class="slide-content"></div>
+                </div>
+                <div class="slide-controls">
+                    <button class="btn-home" onclick="changeSlide(-1)">◀ 上一頁</button>
+                    <span id="slide-num" style="padding: 0 15px; font-weight:bold; font-size: 18px;"></span>
+                    <button class="btn-primary" onclick="changeSlide(1)">下一頁 ▶</button>
+                </div>
+            </div>
+
+            <div class="reference-panel">
+                <button class="btn-lock" onclick="askUnlock()">🔒 教師解鎖專屬示範</button>
+                <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h3 style="margin:0; color:#e67e22; font-size: 18px;">🗣️ 匯報通用語句</h3>
+                    <button class="tts-btn" style="margin:0; padding:4px 8px; font-size:12px;" onclick="speakCurrentPhrase()">🔊 讀出</button>
+                </div>
+                <p style="font-size: 13px; color:#555; margin-top:0;">可參考以下語句來連接：</p>
+                <div id="common-phrases" class="phrase-box"></div>
+                
+                <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+                
+                <h3 style="color:#2980b9; font-size: 18px;">🖼️ 示範 PPT 參考 <span style="font-size:12px;color:#777;">(點擊放大)</span></h3>
+                <div id="v-gallery" style="overflow-y:auto; height:280px; border:1px solid #ddd; background:#fff; padding: 10px; border-radius: 5px;">
+                    <script>
+                        for(let i=1; i<=10; i++) {
+                            document.write(`<img src="V${i}.jpg" class="zoomable" onclick="openImageModal(this.src)" style="width:100%; margin-bottom:10px; border:1px solid #eee; border-radius:4px;" title="點擊放大">`);
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="final-view" class="view-section">
+        <h2 style="text-align: center;">🎉 你的專屬紀念品匯報簡報已完成 🎉</h2>
+        <div class="final-toolbar">
+            <button class="btn-home" onclick="switchView('exercise-view')">◀ 返回編輯修改</button>
+            <button class="btn-accent" onclick="window.print()" style="font-size: 18px; padding: 12px 25px;">🖨️ 一鍵輸出簡報設計 (PDF)</button>
+        </div>
+        <p style="text-align: center; color: #555;">(已為您套用所選的風格與色彩，點擊輸出可儲存為 A4 橫向 PDF 檔案)</p>
+        <div id="final-slides-container" class="final-grid"></div>
+    </div>
+
+</div>
+
+<div id="imageModal" class="modal" onclick="if(event.target===this) closeImageModal()">
+    <img id="enlargedImg" src="" alt="Enlarged Image" onclick="event.stopPropagation()">
+</div>
+
+<div id="unlockModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="document.getElementById('unlockModal').style.display='none'">&times;</span>
+        <h2 id="unlock-title" style="color: var(--primary); border-bottom: 2px solid var(--highlight); padding-bottom: 10px;">專屬匯報示範</h2>
+        <p style="color: #e74c3c; font-weight: bold;">(已成功解鎖，可參考以下完整匯報內容)</p>
+        <div id="unlock-content-container"></div>
+    </div>
+</div>
+
+<script>
+    /* -------------------------------------------------------------------------
+       資料定義：七個步驟框架
+       ------------------------------------------------------------------------- */
+    const baseSteps = [
+        { title: "步驟一：確定公司背景", slideTitle: "公司背景與開場", q: "這是一間怎樣的公司？它的主要業務和品牌形象是什麼？", hint: "提示：請先稱呼對方，說明此次匯報的目的，並簡述公司的背景或形象。", phrase: "「[稱呼]您好，關於公司要求設計宣傳 [品牌名稱] 形象的紀念品，我已準備好方案，現在向您匯報...」" },
+        { title: "步驟二：設定目標顧客及分析特點", slideTitle: "目標顧客分析", q: "紀念品是設計給誰的？他們有什麼喜好或特質？", hint: "提示：具體描繪目標族群的年齡、身分或嗜好，並說明他們注重什麼體驗。", phrase: "「我們的目標對象主要是 [目標族群]... 他們通常具有 [特質/喜好] 的特點，因此我設計了這款...」" },
+        { title: "步驟三：尋找創作靈感", slideTitle: "創作靈感來源", q: "有什麼故事、傳統或事物啟發了這個設計？", hint: "提示：講述一個引人入勝的背景故事、童話傳說或是生活觀察，將其與品牌連結。", phrase: "「我的設計靈感是來自於一個關於 [靈感來源/故事]... 我被這個故事深深打動，便設計出...」" },
+        { title: "步驟四：設計和繪製紀念品草圖", slideTitle: "紀念品草圖展示", q: "紀念品具體是什麼物品？", hint: "提示：簡單引導聽眾觀看你的設計草圖或打樣。", phrase: "「請看大屏幕/附件，這是我的設計草圖/實物圖，它是一款 [物品名稱]...」" },
+        { title: "步驟五：思考創作理念和設計風格", slideTitle: "創作理念與風格", q: "這個設計希望帶出什麼信息？它的整體風格是怎樣的？", hint: "提示：說明這款設計帶給使用者的「情感價值」，並描述外觀的視覺風格（如：簡約、復古、可愛）。", phrase: "「我的設計理念是希望每一位收到這份紀念品的 [使用者]，都能感受到...；同時，設計風格會呈現出 [風格描述] 的格調...」" },
+        { title: "步驟六 A：分析設計特點 (造型)", slideTitle: "設計特點：造型", q: "設計在『造型』上有什麼特別之處？外觀形狀的寓意是什麼？", hint: "提示：描述主體的形狀，並點出其背後代表的品牌意義。", phrase: "「讓我來說說設計特點。首先在造型方面... 它的設計寓意著...」" },
+        { title: "步驟六 B：分析設計特點 (圖案與細節)", slideTitle: "設計特點：圖案與細節", q: "設計加入了什麼『圖案或細節』？這些細節如何配合品牌？", hint: "提示：描述特殊的圖案、標誌或小配件，並連繫到公司的專業形象。", phrase: "「其次，在圖案與細節方面，我加入了... 這正好配合了品牌... 的專業形象。」" },
+        { title: "步驟六 C：分析設計特點 (材質與搭配)", slideTitle: "設計特點：材質與搭配", q: "使用了什麼『材質和色彩』？有什麼視覺或實用效果？", hint: "提示：描述材質的質感（如金屬、木質、布料）及顏色搭配帶來的視覺感受。", phrase: "「最後，在材質與色彩搭配方面，我選用了... 這讓整體視覺顯得...」" },
+        { title: "步驟七：總結設計理念", slideTitle: "總結與致謝", q: "用一兩句話總結整個設計的核心價值，並呼籲採納。", hint: "提示：重申設計亮點，強調能帶來的宣傳效益，並自信地請經理採納。", phrase: "「總括來說，這款 [紀念品名稱]，寓意著... 相信能獲得極佳的宣傳效果，希望您能採納我的設計方案。謝謝！」" }
+    ];
+
+    /* --- 通利琴行的專屬「建構想法」(Ideas) 資料 --- */
+    const tomLeeIdeas = [
+        "通利琴行；要求設計宣傳形象的紀念品；已準備好設計方案及草圖。",
+        "熱愛音樂的顧客、琴行學員、音樂愛好者；對音樂充滿熱誠，重視藝術交流與共鳴；完美傳遞推廣音樂文化的形象。",
+        "「音樂解鎖心靈」的動人故事；內心深處隱藏的情感被高音與低音兩把鑰匙解開；讓人在音樂世界自由飛翔。",
+        "展示設計草圖或實物附件（如附件 P1 所示）。",
+        "感受對音樂的熱愛與堅持；風格以心形和翅膀為基礎；結合金屬質感，呈現活力、鮮豔、具藝術氣息。",
+        "主體：兩半心形與翅膀；中心：鑰匙孔形狀；寓意：插上音樂翅膀翱翔，開啟心靈與潛能。",
+        "圖案：鑲嵌金色高低音；代表：音樂的和諧、包容與完整；配合：提供多元樂器與全面課程的專業形象。",
+        "材質：高質感金屬烤漆工藝；色彩：墨綠、粉綠、純白等；視覺效果：活潑吸睛。",
+        "總結：寓意音樂能開啟心扉、讓夢想展翅；相信能獲得極佳宣傳效果；希望獲採納。"
+    ];
+
+    /* --- 各品牌專屬的完整講稿內容 (供解鎖與首頁 Demo 使用) --- */
+    const brandDemos = {
+        "通利琴行": [
+            "經理，您好，關於公司要求設計一款用來宣傳通利琴行形象的紀念品，我已準備好設計方案，並完成了設計草圖，現在向您匯報。",
+            "我們的目標對象是熱愛音樂的顧客、琴行的學員以及廣大的音樂愛好者。他們對音樂充滿熱誠，重視藝術的交流與共鳴。因此，我設計了一款名為「樂動心弦」的限量版音樂羽翼徽章，希望能以精緻且富有深意的設計，完美傳遞通利琴行致力推廣音樂文化的品牌形象。",
+            "我的設計靈感來自一個關於「音樂解鎖心靈」的動人故事。傳說中，每個人的內心深處都有一扇緊鎖的門，裡面藏著最純粹的情感、愛與夢想，但卻難以向外人訴說。直到有一天，掌管旋律的精靈帶來了兩把鑰匙——高音與低音。當兩種音符一起演奏時，便會化作萬能鑰匙，解開人們心底的枷鎖，讓人在音樂的世界裡自由飛翔。我被這個故事深深打動，便設計出這款「樂動心弦」的紀念品。",
+            "這是我的設計草圖（如附件 P1 所示）。",
+            "我的設計理念是希望每一位收到這份紀念品的顧客，都能感受到通利琴行對音樂的熱愛與堅持；同時，設計風格以心形和翅膀為基礎，結合金屬質感，呈現出活力、鮮豔、具藝術氣息的格調。",
+            "讓我來說說這個設計的特點吧！首先，在造型方面，徽章主體是一個兩半拼湊而成的心形，寓意通利琴行為顧客插上音樂的翅膀，帶領他們在音樂殿堂中翱翔。在心形中心位置，我巧妙地設計了一個「鑰匙孔」的形狀，象徵音樂正是開啟心靈與潛能的鑰匙。",
+            "其次，在圖案與細節方面，紅色的心形左右兩邊分別鑲嵌了金色的高音和低音。高低音的結合代表著音樂的和諧、包容與完整，正好配合通利琴行提供多元化樂器、全面音樂課程的專業形象。",
+            "最後，在材質與色彩搭配方面，徽章採用了高質感的金屬烤漆工藝，搭配墨綠、粉綠、純白等豐富的色彩，讓視覺上活潑吸睛。",
+            "總括來說，我設計的這款「樂動心弦」紀念徽章，寓意音樂能開啟心扉、讓夢想展翅，相信能獲得極佳的宣傳效果，希望您能採納我的設計方案。謝謝！"
+        ],
+        "愉景灣酒店": [
+            "經理，您好，關於公司要求設計一款用來宣傳愉景灣酒店形象的紀念品，我已準備好設計方案，並完成了設計草圖，現在向您匯報。",
+            "我們的目標顧客主要是來酒店度假的本地情侶、新婚夫婦以及慶祝結婚紀念日的賓客。他們非常注重浪漫的氛圍和充滿儀式感的獨特體驗。因此，我設計了一款「情定愉景灣」心形同心鎖，希望能以經典浪漫的設計風格與互動體驗吸引他們。",
+            "我的設計靈感來自一個關於「愛情鎖」的浪漫傳統。傳說在世界各地的浪漫之都，相愛的戀人會將刻有彼此名字的鎖，緊緊鎖在橋樑或柵欄上，並將鑰匙拋去，寓意兩人的心永遠相連，愛情堅不可摧。愉景灣擁有著名的海濱白教堂和浪漫景致，是無數戀人締結良緣的聖地。我被這個象徵永恆承諾的故事深深啟發，便設計出這款紀念品。",
+            "這是我的設計草圖（如附件 P2 所示）。",
+            "我的設計理念是希望每一對獲得這把同心鎖的賓客，都能在愉景灣酒店留下專屬的浪漫回憶，鎖住彼此的真心；同時，設計風格以心形造型為基礎，呈現出復古經典、簡約雋永的格調。",
+            "讓我來說說這個設計的特點吧！首先，在造型方面，我以經典的「心形」作為鎖的本體，直白地寓意著真摯與純潔的愛情。同時，我特意設計了加長的銀色 U 型鎖樑，不僅讓整體視覺顯得修長優雅，在實用性上也方便賓客將其扣在酒店指定的愛情打卡牆上。",
+            "其次，在圖案與細節方面，鎖面上精緻地雕刻了中英文「DISCOVERY BAY 愉景灣」字樣，字體帶有獨特的裝飾藝術風格，彰顯了愉景灣獨特且高雅的生活品味。鎖樑底部巧妙地加入了一截鮮紅色的膠套點綴，猶如傳統文化中月老的「紅線」，象徵著命中注定的浪漫緣分。",
+            "最後，在材質與宣傳效應方面，鎖身採用了散發復古光澤的黃銅色金屬材質，象徵著愛情歷久彌新。這不僅是一件紀念品，更是一場體驗，賓客可將其鎖在打卡點，獨特的造型必能吸引他們在社交媒體分享，強化酒店作為浪漫首選的品牌形象。",
+            "總括來說，我設計的這款「情定愉景灣」同心鎖，寓意賓客能在這裡鎖住幸福，時刻洋溢著浪漫的感覺，相信一定會深受情侶賓客的喜愛，希望您能採納我的設計方案。謝謝！"
+        ],
+        "下呂溫泉": [
+            "經理，您好，關於公司要求設計一款用來宣傳下呂溫泉酒店形象的紀念品，我已準備好設計方案，並完成了設計草圖，現在向您匯報。",
+            "我們的目標顧客是前來體驗溫泉文化的家庭旅客、年輕群體以及觀光客。他們喜歡可愛、具有地方色彩且能留下美好回憶的伴手禮。因此，我設計了這款「下呂溫泉青蛙毛絨吊飾」，希望能以充滿童趣且蘊含傳統文化的設計風格吸引他們。",
+            "我的設計靈感來自一個關於下呂溫泉與青蛙的有趣淵源。在日本文化中，青蛙的發音與「平安歸來」相同，象徵保佑旅人旅途平安。更巧妙的是，青蛙的叫聲正好與我們「下呂」溫泉的名字發音一模一樣！這個可愛的巧合，讓青蛙成為了下呂溫泉最親切的代言人。我被這個充滿祝福的意涵深深吸引，便設計出這款紀念品。",
+            "這是我的設計草圖（如附件 P3 所示）。",
+            "我的設計理念是希望每一位帶走它的旅客，都能將下呂溫泉的溫暖與「平安歸來」的祝福帶回家；同時，設計風格以擬人化的可愛青蛙為基礎，呈現出活潑親切、充滿日式傳統風情的格調。",
+            "讓我來說說這個設計的特點吧！首先，在造型方面，我以一隻擁有明亮大眼、帶有粉紅微醺臉頰的綠色小青蛙作為主體。微紅的臉頰生動地展現出泡完溫泉後通體舒暢的模樣，寓意溫泉的療癒功效。它微微張開雙手，則象徵著酒店熱情歡迎每一位賓客。",
+            "其次，在圖案與細節方面，青蛙穿著一件特別設計的紅色日式傳統祭典法被，下襬搭配紅白相間的傳統格紋。衣服的袖子上印有經典的溫泉標誌，胸前則有水波紋的可愛鈕扣設計，完美呼應了下呂作為日本三大名泉之一的在地特色。",
+            "最後，在材質與色彩搭配方面，採用了觸感柔軟的毛絨材質，搭配鮮明的紅綠對比色彩，極具記憶點。頂部設有金屬掛繩，方便旅客掛在背包上，成為絕佳的「行走的廣告」，附有復古吊牌更提升了紀念價值。",
+            "總括來說，我設計的這款「下呂青蛙毛絨吊飾」，不僅運用了諧音與祝福寓意，更完美融入溫泉鄉傳統元素，相信一定會成為最佳的宣傳大使，希望您能採納我的設計方案。謝謝！"
+        ],
+        "元氣壽司": [
+            "經理，您好，關於公司要求設計一款用來宣傳元氣壽司餐廳形象的紀念品，我已準備好設計方案，並完成了設計草圖，現在向您匯報。",
+            "我們的目標顧客是熱愛日本美食的年輕世代、家庭客群，以及廣大的動漫愛好者。他們喜歡充滿活力、具有新鮮感且帶有童年回憶的事物。因此，我設計了一款「多啦A夢任意門隨身小捲尺」，希望能以跨界聯名的活潑設計風格吸引他們。",
+            "我的設計靈感來自一個關於「任意門」的童趣想像與品牌理念的結合。在經典動漫中，「任意門」能瞬間到達世界任何角落。這讓我聯想到，元氣壽司致力將最正宗的日本體驗帶給顧客，各家分店就像是一扇扇神奇的任意門，顧客一走進餐廳，就彷彿瞬間穿越到了日本，感受到純粹的快樂。我被這概念啟發，便設計出這款紀念品。",
+            "這是我的設計草圖（如附件 P4 所示）。",
+            "我的設計理念是希望讓顧客在離開餐廳後，也能在日常生活中感受到元氣壽司帶來的活力與驚喜；同時，設計風格以經典動漫角色為基礎，呈現出活潑可愛、色彩鮮明且充滿親切感的格調。",
+            "讓我來說說這個設計的特點吧！首先，在造型方面，紀念品採用了俐落的圓形設計，不僅方便攜帶，更象徵著我們迴轉壽司店裡源源不絕的「圓形壽司碟」。畫面中央是多啦A夢從粉紅色的「任意門」探出頭來的俏皮模樣，寓意元氣壽司隨時開啟通往美味與歡樂的大門。",
+            "其次，在圖案與細節方面，我將多啦A夢的官方標誌與我們「元氣壽司」極具辨識度的經典發怒臉 Logo 並列放置在正下方。這種強強聯手的視覺呈現毫無違和感，能瞬間抓住年輕族群目光，有效提升品牌的好感度與年輕化形象。",
+            "最後，在實用性與色彩搭配方面，我將圖案應用在輕巧實用的隨身小捲尺上，整體色彩明亮充滿朝氣。這是一款顧客日常能實際用得上的好物，每一次使用都會再次看到元氣壽司的標誌，從而達到持續且長效的宣傳目的。",
+            "總括來說，我設計的這款「多啦A夢任意門聯名隨身捲尺」，寓意元氣壽司能帶給顧客如魔法般的快樂與美味，相信一定會引發換購熱潮，希望您能採納我的設計方案。謝謝！"
+        ],
+        "運動家": [
+            "經理，您好，關於公司要求設計一款用來宣傳運動家形象的紀念品，我已準備好設計方案，並完成了設計草圖，現在向您匯報。",
+            "我們的目標顧客是熱愛體育運動的球迷、經常購買運動裝備的年輕人，以及廣大體育愛好者。他們對運動充滿熱誠，崇尚拼搏精神與競技體育的魅力。因此，我設計了一款「王者之風——傳奇球星紀念鎖匙扣」，希望能以結合體育盛事與潮流公仔的設計風格吸引他們。",
+            "我的設計靈感來自一個關於「永不言敗的運動家精神」的真實傳奇故事。在綠茵場上，一位傳奇球星經歷了無數次挫折，憑藉著對足球的熱愛與毅力，最終帶領團隊捧起大力神盃，加冕為王。這個故事完美詮釋了堅持到底的「運動家精神」，這也正是我們品牌希望傳遞的核心價值。我被這份精神感動，便設計出這款紀念品。",
+            "這是我的設計草圖（如附件 P6 所示）。",
+            "我的設計理念是希望每一位將它掛在運動背包上的顧客，都能受到這份冠軍精神的鼓舞，在自己的賽場上勇往直前；同時，設計風格以 Q 版潮流公仔為基礎，呈現出活力十足、精緻吸睛的格調。",
+            "讓我來說說這個設計的特點吧！首先，在造型方面，我以標誌性的阿根廷球星為雛形，設計成擁有大眼睛的 Q 版立體公仔。他手中緊緊握著金光閃閃的大力神盃，這不僅還原了奪冠瞬間，更寓意著「運動家」致力於為顧客提供最頂尖的裝備，助力他們贏得屬於自己的獎盃。",
+            "其次，在圖案與細節方面，這款鎖匙扣充滿了象徵榮耀的體育元素。我加入了一塊印有阿根廷足協標誌與三顆金色五角星的盾型吊飾，代表著三星榮耀。旁邊搭配的天藍色掛繩印有「世界冠軍」字樣及經典黑白足球圖案，充滿熱血與活力。",
+            "最後，在材質與實用性方面，鎖匙扣主體採用了耐磨、防水的環保矽膠材質，並配備堅固的金屬扣環。當顧客帶著它去健身房或戶外運動時，這款吸睛的紀念品便成為展現體育熱情的配件，無形中傳遞了我們專業、熱血的品牌形象。",
+            "總括來說，我設計的這款「傳奇球星紀念鎖匙扣」，寓意著我們與顧客共同分享勝利喜悅，並時刻踐行運動家精神，相信一定會引發廣大球迷共鳴，希望您能採納我的設計方案。謝謝！"
+        ],
+        "飛利浦": [
+            "經理，您好，關於公司要求設計一款用來宣傳飛利浦企業形象的紀念品，我已準備好設計方案，並完成了設計草圖，現在向您匯報。",
+            "我們的目標顧客是重視生活品質的現代都市女性、職場白領，以及飛利浦美容家電的忠實用戶。她們在忙碌生活中依然追求精緻，注重儀容與自信展現。因此，我設計了一款「煥采隨身化妝鏡」，希望能以高雅質感且極具實用性的設計風格吸引她們。",
+            "我的設計靈感來自一個關於「看見真實與自信之美」的現代女性故事。在快節奏社會中，女性常會因疲憊而忘記自己的光芒。飛利浦的核心理念是透過創新科技，溫柔呵護女性，幫助她們煥發最自然的美麗。我認為一面精緻的隨身鏡，正是陪伴女性看見自己、重拾自信的最佳信物，便以此概念設計出這款紀念品。",
+            "這是我的設計草圖（如附件 P7 所示）。",
+            "我的設計理念是希望每一位打開這面鏡子的顧客，都能隨時隨地看見自己最美的狀態，感受到飛利浦無微不至的呵護；同時，設計風格以經典翻蓋圓鏡為基礎，呈現出簡約奢華、優雅知性的格調。",
+            "讓我來說說這個設計的特點吧！首先，在造型方面，我採用了經典流暢的圓潤翻蓋設計。這不僅符合人體工學，握在手中手感溫潤，圓形更寓意著飛利浦為顧客帶來圓滿、完美的生活體驗。雙面鏡的設計能滿足女性在不同場合的補妝需求。",
+            "其次，在圖案與細節方面，我在下方的鏡面上以低調且精緻的雷射雕刻工藝印上了「Philips Beauty」的字樣。這既彰顯了品牌專屬感，又不會破壞鏡面的整體美觀，讓顧客在使用時產生強烈的品牌聯想。",
+            "最後，在材質與色彩搭配方面，外觀採用純潔優雅的珍珠白，內部邊框與鉸鏈則大膽選用了奢華的「玫瑰金」。玫瑰金正是飛利浦頂級美容家電最具標誌性的配色。化妝鏡具有極高的日常使用頻率，能在無形中將飛利浦與美麗精緻畫上等號。",
+            "總括來說，我設計的這款「煥采隨身化妝鏡」，寓意著飛利浦時刻陪伴顧客，照亮她們的自信與美麗，相信一定會深受女性顧客的喜愛與珍藏，希望您能採納我的設計方案。謝謝！"
+        ],
+        "戴森 Dyson": [
+            "經理，您好，關於公司要求設計一款用來宣傳戴森企業形象及新產品的紀念品，我已準備好設計方案，並完成了設計草圖，現在向您匯報。",
+            "我們的目標顧客是追求高品質生活的升級用戶、熱愛潮流造型的年輕世代，以及代言人張員瑛的廣大粉絲。他們渴望在日常中擁有明星般健康柔順的秀髮。因此，我設計了一款「Wonyoung 專屬限量版指環鑰匙扣」，希望能以結合品牌科技感與偶像號召力的設計風格吸引他們。",
+            "我的設計靈感來自一個關於「全面升級的耀眼守護」的故事。張員瑛在舞台上閃耀，背後有戴森升級版風筒以智能溫控無微不至地守護髮絲免受熱傷害。這份「全面升級的護髮承諾」，讓我聯想到能緊緊環繞、象徵堅定承諾的「指環」。我被這個「用科技守護極致光芒」的故事啟發，便以此設計出這款紀念品。",
+            "這是我的設計草圖（如附件 P8 所示）。",
+            "我的設計理念是希望每一位購買的顧客，都能感受到戴森為她們帶來如明星般閃耀自信的護髮體驗；同時，設計風格以精緻金屬工藝為基礎，呈現出集潮流、甜美與未來科技感於一身的格調。",
+            "讓我來說說這個設計的特點吧！首先，在造型方面，我採用了兼具裝飾性與實用性的「指環」作為核心造型。指環中空的圓形設計，不僅完美呼應了戴森風筒最具辨識度的「無扇葉中空圓環」經典外觀，更寓意著新產品的 360 度全方位氣流包覆技術。",
+            "其次，在圖案與細節方面，指環上方連接著流暢的草書英文字母「wonyoung」，直接點出新產品的代言人，極具話題性與收藏價值。指環正面鑲嵌了一顆晶瑩剔透的紫紅色水鑽，這顆水鑽象徵著風筒內部的智能溫控晶片核心。",
+            "最後，在材質與色彩搭配方面，整體選用散發冷冽高級感的銀色金屬，契合戴森工業科技美學；水鑽的粉紫色則是戴森最經典的品牌配色。搭配復古金屬波膠鏈，它能成為百搭隨身配件，勢必引發粉絲打卡分享，為新產品帶來極高網絡討論度。",
+            "總括來說，我設計的這款「Wonyoung 指環鑰匙扣」，寓意著戴森能為顧客提供完美護髮承諾，完美融合科技升級亮點與代言人效應，相信能達成絕佳宣傳目的，希望您能採納我的設計方案。謝謝！"
+        ]
+    };
+
+    /* -------------------------------------------------------------------------
+       模態框邏輯
+       ------------------------------------------------------------------------- */
+    function openImageModal(src) {
+        document.getElementById('enlargedImg').src = src;
+        document.getElementById('imageModal').style.display = 'flex';
+    }
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    function askUnlock() {
+        const pwd = prompt("請輸入教師解鎖密碼：");
+        if (pwd === "DILWL") {
+            showUnlockedDemo();
+        } else if (pwd !== null) {
+            alert("密碼錯誤，請向老師查詢解鎖密碼！");
+        }
+    }
+
+    function showUnlockedDemo() {
+        const demoData = brandDemos[currentComp];
+        const container = document.getElementById('unlock-content-container');
+        document.getElementById('unlock-title').innerText = `${currentComp} - 專屬匯報示範`;
+        container.innerHTML = '';
+
+        if (!demoData) {
+            container.innerHTML = '<p>暫無此草圖的專屬示範資料。</p>';
+        } else {
+            demoData.forEach((text, i) => {
+                const textToSpeak = text.replace(/<[^>]*>?/gm, ''); 
+                container.innerHTML += `
+                    <div class="locked-step-box">
+                        <h4>${baseSteps[i].title}</h4>
+                        <p style="font-size:16px; line-height:1.6; color:#444;">${text}</p>
+                        <button class="tts-btn" onclick="speakText('${textToSpeak}')">🔊 聆聽朗讀</button>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('unlockModal').style.display = 'flex';
+    }
+
+    /* -------------------------------------------------------------------------
+       控制邏輯
+       ------------------------------------------------------------------------- */
+    function switchView(viewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+        document.getElementById(viewId).classList.add('active-view');
+        window.speechSynthesis.cancel(); 
+    }
+
+    /* === 首頁示範區 (通利琴行) === */
+    function openDemo() {
+        const container = document.getElementById('demo-steps-container');
+        container.innerHTML = ''; 
+
+        baseSteps.forEach((step, index) => {
+            const stepHtml = `
+                <div class="step-container">
+                    <div class="step-header">${step.title}</div>
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" onclick="switchTab(this, 'q', ${index})">🤔 思考問題</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'i', ${index})">💡 建構想法</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'c', ${index})">📝 組織內容 (示範講稿)</button>
+                    </div>
+                    <div class="tab-content" id="tab-content-${index}">
+                        <div style="color: #c0392b; font-weight: bold; font-size: 18px;">${step.q}</div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += stepHtml;
+        });
+        switchView('demo-view');
+    }
+
+    function switchTab(btn, type, index) {
+        const buttons = btn.parentElement.querySelectorAll('.tab-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const contentDiv = document.getElementById(`tab-content-${index}`);
+        if (type === 'q') {
+            contentDiv.innerHTML = `<div style="color: #c0392b; font-weight: bold; font-size: 18px;">${baseSteps[index].q}</div>`;
+        } else if (type === 'i') {
+            const ideas = tomLeeIdeas[index].split('；').map(item => `<li>${item}</li>`).join('');
+            contentDiv.innerHTML = `<div style="color: #2980b9; font-weight: bold; font-size: 17px; margin-bottom: 10px;">重點短句：</div><ul style="font-size: 16px; line-height: 1.6;">${ideas}</ul>`;
+        } else if (type === 'c') {
+            const textHTML = brandDemos["通利琴行"][index];
+            const textToSpeak = textHTML.replace(/<[^>]*>?/gm, ' '); 
+            contentDiv.innerHTML = `
+                <div style="color: #2c3e50; font-size: 17px;">${textHTML}</div>
+                <button class="tts-btn" onclick="speakText('${textToSpeak}')">🔊 聆聽普通話朗讀</button>
+            `;
+        }
+    }
+
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN'; 
+            utterance.rate = 0.95; 
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("您的瀏覽器不支持語音朗讀功能。");
+        }
+    }
+
+    function speakCurrentPhrase() {
+        const stepData = baseSteps[currentSlideIndex - 1];
+        speakText(stepData.phrase.replace(/\[.*?\]/g, '')); 
+    }
+
+    /* === 實作區 === */
+    let currentImg = '';
+    let currentComp = '';
+    let currentSlideIndex = 1;
+    const totalSlides = baseSteps.length; 
+
+    function updatePPTTheme() {
+        const color = document.getElementById('ppt-color-picker').value;
+        const styleClass = document.getElementById('ppt-style-picker').value;
+        
+        document.documentElement.style.setProperty('--ppt-theme', color);
+        
+        const previewContainer = document.getElementById('preview-slide-container');
+        previewContainer.className = "slide-container"; 
+        previewContainer.classList.add(styleClass);
+    }
+
+    function saveProgress() {
+        const data = {};
+        for(let i=1; i<=totalSlides; i++) {
+            data[i] = document.getElementById(`ex-input-${i}`).value;
+        }
+        localStorage.setItem(`savedData_${currentComp}`, JSON.stringify(data));
+        alert(`已成功保留 ${currentComp} 的草稿內容！`);
+    }
+
+    function startExercise(imgSrc, compName) {
+        currentImg = imgSrc;
+        currentComp = compName;
+        document.getElementById('exercise-title').innerText = `${compName} - 紀念品設計簡報實作`;
+        
+        const savedRaw = localStorage.getItem(`savedData_${currentComp}`);
+        const savedData = savedRaw ? JSON.parse(savedRaw) : null;
+
+        const inputsContainer = document.getElementById('exercise-inputs-container');
+        inputsContainer.innerHTML = '';
+        
+        baseSteps.forEach((step, index) => {
+            const stepNum = index + 1;
+            let defaultText = "";
+            if (savedData && savedData[stepNum]) {
+                defaultText = savedData[stepNum];
+            } else {
+                if(stepNum === 1) defaultText = `經理您好，關於公司要求設計宣傳${compName}形象的紀念品，我已準備好方案，現在向您匯報。\n\n`;
+                if(stepNum === 4) defaultText = `這是我的設計草圖（如附件草圖所示）。`;
+            }
+
+            inputsContainer.innerHTML += `
+                <div class="exercise-step" id="ex-step-${stepNum}">
+                    <h4>${step.title}</h4>
+                    <div class="hint-text"><b>引導思考：</b>${step.q}<br>${step.hint}</div>
+                    <textarea id="ex-input-${stepNum}" onfocus="changeSlideTo(${stepNum})" oninput="updateSlidePreview()">${defaultText}</textarea>
+                </div>
+            `;
+        });
+
+        document.getElementById('ppt-color-picker').value = "#3498db";
+        document.getElementById('ppt-style-picker').value = "theme-minimalist";
+        updatePPTTheme();
+
+        currentSlideIndex = 1;
+        updateSlidePreview();
+        switchView('exercise-view');
+        document.querySelector('.editor-panel').scrollTop = 0;
+    }
+
+    function changeSlideTo(num) {
+        currentSlideIndex = num;
+        updateSlidePreview();
+        document.getElementById(`ex-step-${num}`).scrollIntoView({behavior: "smooth", block: "center"});
+    }
+
+    function changeSlide(direction) {
+        let newIndex = currentSlideIndex + direction;
+        if(newIndex >= 1 && newIndex <= totalSlides) {
+            changeSlideTo(newIndex);
+        }
+    }
+
+    function updateSlidePreview() {
+        const stepData = baseSteps[currentSlideIndex - 1];
+        document.getElementById('preview-title').innerText = stepData.slideTitle;
+        document.getElementById('slide-num').innerText = currentSlideIndex + " / " + totalSlides;
+        
+        const textContent = document.getElementById(`ex-input-${currentSlideIndex}`).value;
+        document.getElementById('preview-content').innerText = textContent;
+
+        const imgEl = document.getElementById('preview-image');
+        if ([4, 6, 7, 8].includes(currentSlideIndex)) {
+            imgEl.src = currentImg;
+            imgEl.style.display = 'block';
+        } else {
+            imgEl.style.display = 'none';
+        }
+
+        document.getElementById('common-phrases').innerText = stepData.phrase;
+    }
+
+    /* === 最終預覽與輸出邏輯 === */
+    function generateFinal() {
+        const finalContainer = document.getElementById('final-slides-container');
+        finalContainer.innerHTML = '';
+        const selectedStyle = document.getElementById('ppt-style-picker').value;
+
+        const isMinimalist = selectedStyle === 'theme-minimalist';
+        const decorators = isMinimalist ? `
+            <div class="minimalist-line"></div>
+            <div class="warm-dots top-right"></div>
+            <div class="warm-dots bottom-left"></div>
+        ` : '';
+
+        for(let i=1; i<=totalSlides; i++) {
+            const stepData = baseSteps[i-1];
+            const content = document.getElementById(`ex-input-${i}`).value;
+            const imgHtml = ([4, 6, 7, 8].includes(i)) ? `<img src="${currentImg}" class="slide-image">` : '';
+            const marginStyle = isMinimalist ? 'margin-left: 20px;' : '';
+
+            finalContainer.innerHTML += `
+                <div class="slide-container ${selectedStyle}">
+                    ${decorators}
+                    <div class="slide-title" style="${marginStyle}">${stepData.slideTitle}</div>
+                    ${imgHtml}
+                    <div class="slide-content" style="${marginStyle}">${content}</div>
+                </div>
+            `;
+        }
+
+        switchView('final-view');
+        saveProgress(); 
+    }
+
+</script>
+</body>
+</html>
