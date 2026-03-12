@@ -22,7 +22,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 1400px; /* 稍微加寬以適應新排版 */
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -59,6 +59,18 @@
         .gallery-item img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px 10px 0 0; border-bottom: 1px solid #eee; margin-bottom: 10px;}
         .gallery-item p { font-weight: bold; font-size: 16px; margin: 5px 0; color: var(--primary); }
 
+        /* 自由創作特製按鈕 */
+        .gallery-free-design {
+            grid-column: 1 / -1; 
+            margin-top: 20px; 
+            display: flex; justify-content: center;
+        }
+        .free-design-card {
+            width: 300px; background: #ebf5fb; border: 2px dashed #2980b9; 
+            border-radius: 10px; text-align: center; padding: 20px; cursor: pointer; transition: 0.3s;
+        }
+        .free-design-card:hover { background: #d6eaf8; transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        
         /* 示範區 (Tom Lee) 樣式 */
         .step-container { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
         .step-header { background: var(--primary); color: white; padding: 12px 20px; font-size: 18px; font-weight: bold; }
@@ -72,84 +84,23 @@
         .tts-btn { background: #27ae60; color: white; padding: 6px 12px; border-radius: 4px; font-size: 14px; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: none;}
         .tts-btn:hover { background: #2ecc71; }
 
-        /* ================= 實作區全新佈局 ================= */
-        .workspace { 
-            display: flex; 
-            gap: 25px; 
-            align-items: stretch; /* 讓左右等高或適應 */
-            flex-wrap: wrap; /* 允許在小螢幕時折行 */
-        }
-        
-        .editor-panel { 
-            flex: 1 1 350px; /* 最小寬度350px，自動伸展 */
-            max-width: 500px;
-            height: 60vh; /* 固定高度，內部捲動 */
-            overflow-y: auto; 
-            padding: 20px; 
-            border: 1px solid #eee; 
-            background: #fafafa; 
-            border-radius: 8px; 
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
-            box-sizing: border-box;
-        }
-
-        .preview-panel { 
-            flex: 2 1 400px; /* 預覽區佔較大比例 */
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: flex-start;
-            box-sizing: border-box;
-        }
+        /* 實作區全新佈局 */
+        .workspace { display: flex; gap: 25px; align-items: stretch; flex-wrap: wrap; }
+        .editor-panel { flex: 1 1 350px; max-width: 500px; height: 60vh; overflow-y: auto; padding: 20px; border: 1px solid #eee; background: #fafafa; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.02); box-sizing: border-box;}
+        .preview-panel { flex: 2 1 400px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; box-sizing: border-box;}
 
         /* 將參考區移到底部並橫向排列 */
-        .reference-panel-bottom { 
-            width: 100%; 
-            margin-top: 30px; 
-            padding: 20px; 
-            background: #fff8ee; 
-            border: 1px solid #f39c12; 
-            border-radius: 8px; 
-            box-sizing: border-box;
-        }
-
-        .ref-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
+        .reference-panel-bottom { width: 100%; margin-top: 30px; padding: 20px; background: #fff8ee; border: 1px solid #f39c12; border-radius: 8px; box-sizing: border-box;}
+        .ref-header-row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;}
         .phrase-section { flex: 1; min-width: 300px; }
         .lock-section { flex: 0 0 auto; display: flex; align-items: center;}
 
         /* PPT範例橫向捲動 */
-        #v-gallery { 
-            display: flex; 
-            overflow-x: auto; 
-            gap: 15px; 
-            padding: 10px 5px; 
-            /* 隱藏捲軸美化 */
-            scrollbar-width: thin;
-            scrollbar-color: #f39c12 #fdf2e9;
-        }
+        #v-gallery { display: flex; overflow-x: auto; gap: 15px; padding: 10px 5px; scrollbar-width: thin; scrollbar-color: #f39c12 #fdf2e9;}
         #v-gallery::-webkit-scrollbar { height: 8px; }
         #v-gallery::-webkit-scrollbar-thumb { background: #f39c12; border-radius: 4px; }
-        
-        #v-gallery img { 
-            height: 180px; /* 固定高度，寬度自適應 */
-            width: auto;
-            border: 1px solid #eee; 
-            border-radius: 4px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            flex-shrink: 0; /* 防止圖片被擠壓 */
-            cursor: zoom-in;
-            transition: 0.2s;
-        }
+        #v-gallery img { height: 180px; width: auto; border: 1px solid #eee; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-shrink: 0; cursor: zoom-in; transition: 0.2s;}
         #v-gallery img:hover { transform: scale(1.03); }
-        /* ================================================= */
 
         /* 實作區工具列 */
         .editor-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed #ccc; align-items: center; justify-content: space-between;}
@@ -159,53 +110,19 @@
         select { padding: 5px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; }
         .action-tools { display: flex; gap: 10px; }
 
-        /* 實作區表單 */
+        /* 實作區表單與自訂上傳按鈕 */
         .exercise-step { margin-bottom: 25px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--highlight); box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
         .exercise-step h4 { margin: 0 0 10px 0; color: var(--primary); }
         .hint-text { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; line-height: 1.4; background: #f0f8ff; padding: 8px; border-radius: 4px;}
         textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 15px; box-sizing: border-box; height: 110px; resize: vertical; font-family: inherit;}
+        .custom-upload-label { display: inline-block; font-size: 13px; font-weight: bold; color: #2980b9; cursor: pointer; background: #e8f4f8; padding: 6px 12px; border-radius: 4px; border: 1px solid #bce8f1; margin-bottom: 10px; transition: 0.2s; }
+        .custom-upload-label:hover { background: #d6eaf8; }
 
-        /* PPT 預覽動態縮放設計 (支援手機與大螢幕) */
-        .slide-container { 
-            width: 100%; 
-            aspect-ratio: 16 / 9; 
-            background: white; 
-            border: 2px solid var(--ppt-theme); 
-            border-radius: 5px; 
-            padding: 4%; /* 使用百分比，隨寬度縮放 */
-            box-sizing: border-box; 
-            position: relative; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .slide-title { 
-            font-size: clamp(18px, 3.5vw, 28px); /* 字體動態縮放 */
-            font-weight: bold; 
-            color: var(--ppt-theme); 
-            margin-bottom: 3%; 
-            border-bottom: 3px solid var(--ppt-theme); 
-            padding-bottom: 2%; 
-            transition: all 0.3s ease;
-        }
-        .slide-content { 
-            font-size: clamp(14px, 2.5vw, 20px); /* 字體動態縮放 */
-            line-height: 1.6; 
-            white-space: pre-wrap; 
-            color: #444; 
-            flex: 1; 
-            overflow-y: auto;
-        }
-        .slide-image { 
-            max-height: 40%; /* 圖片不超過版面40% */
-            display: block; 
-            margin: 2% auto; 
-            object-fit: contain; 
-            border-radius: 5px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+        /* PPT 預覽動態縮放設計 */
+        .slide-container { width: 100%; aspect-ratio: 16 / 9; background: white; border: 2px solid var(--ppt-theme); border-radius: 5px; padding: 4%; box-sizing: border-box; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; transition: all 0.3s ease;}
+        .slide-title { font-size: clamp(18px, 3.5vw, 28px); font-weight: bold; color: var(--ppt-theme); margin-bottom: 3%; border-bottom: 3px solid var(--ppt-theme); padding-bottom: 2%; transition: all 0.3s ease;}
+        .slide-content { font-size: clamp(14px, 2.5vw, 20px); line-height: 1.6; white-space: pre-wrap; color: #444; flex: 1; overflow-y: auto;}
+        .slide-image { max-height: 40%; display: block; margin: 2% auto; object-fit: contain; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
         .slide-controls { margin-top: 20px; display: flex; gap: 15px; width: 100%; justify-content: center; align-items: center;}
 
         /* 主題風格 */
@@ -245,10 +162,10 @@
         .final-grid { display: grid; grid-template-columns: 1fr; gap: 40px; margin-top: 20px; background: #f5f6fa; padding: 30px; border-radius: 10px;}
         .final-toolbar { text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 15px;}
         
-        /* 手機版排版調整 (@media queries) */
+        /* 手機版排版調整 */
         @media (max-width: 900px) {
-            .workspace { flex-direction: column; } /* 改為上下排列 */
-            .editor-panel { max-width: 100%; height: 45vh; /* 讓文字框佔一半畫面，下方看預覽 */ }
+            .workspace { flex-direction: column; } 
+            .editor-panel { max-width: 100%; height: 45vh; }
             .preview-panel { width: 100%; }
             .container { padding: 15px; }
             .nav-buttons button { font-size: 13px; padding: 6px 12px; }
@@ -282,12 +199,11 @@
         
         <div class="demo-section" onclick="openDemo()">
             <h2 style="border:none; color: var(--accent); margin:0; font-size: clamp(20px, 3vw, 26px);">⭐ 通利琴行 (匯報示範) ⭐</h2>
-            <p style="color: #555; margin-top: 5px; font-weight: bold;">選擇紀念品草圖</p>
-            <p style="color: #888; font-size: 14px; margin-top: 0;">(點擊查看完整匯報結構與語音示範)</p>
+            <p style="color: #555; margin-top: 5px; font-weight: bold;">點擊查看完整匯報結構與語音示範</p>
             <img src="P1.jpg" alt="通利琴行草圖">
         </div>
 
-        <h2 style="text-align: center; border: none; color: var(--primary);">選擇紀念品草圖 (開始練習)</h2>
+        <h2 style="text-align: center; border: none; color: var(--primary);">選擇紀念品草圖 (主題練習)</h2>
         <div class="gallery">
             <script>
                 const items = [
@@ -304,6 +220,16 @@
                     `);
                 });
             </script>
+        </div>
+
+        <h2 style="text-align: center; border: none; color: #2980b9; margin-top: 50px;">🌟 自由創作模板 (上傳專屬草圖) 🌟</h2>
+        <div class="gallery-free-design">
+            <div class="free-design-card" onclick="startExercise('custom', '我的專屬品牌')">
+                <div style="font-size: 50px; margin-bottom: 10px;">🎨</div>
+                <h3 style="color: #2980b9; margin: 0 0 5px 0;">全新自由設計</h3>
+                <p style="font-size: 14px; color: #555; margin: 0;">不限主題，可於每一頁自由上傳圖片</p>
+                <button class="btn-primary" style="margin-top: 15px;">開始創作</button>
+            </div>
         </div>
     </div>
 
@@ -361,7 +287,7 @@
             </div>
         </div>
 
-        <div class="reference-panel-bottom">
+        <div class="reference-panel-bottom" id="reference-bottom-area">
             <div class="ref-header-row">
                 <div class="phrase-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -535,6 +461,10 @@
     }
 
     function askUnlock() {
+        if(isFreeDesignMode) {
+            alert("自由創作模式下沒有預設的標準示範哦！請發揮你的創意！");
+            return;
+        }
         const pwd = prompt("請輸入教師解鎖密碼：");
         if (pwd === "DILWL") {
             showUnlockedDemo();
@@ -637,10 +567,12 @@
         speakText(stepData.phrase.replace(/\[.*?\]/g, '')); 
     }
 
-    /* === 實作區 === */
+    /* === 實作區 (支援自由創作模式) === */
     let currentImg = '';
     let currentComp = '';
     let currentSlideIndex = 1;
+    let isFreeDesignMode = false;
+    let customImages = {}; // 儲存自由創作模式下的各頁圖片 Base64
     const totalSlides = baseSteps.length; 
 
     function updatePPTTheme() {
@@ -655,21 +587,44 @@
     }
 
     function saveProgress() {
-        const data = {};
-        for(let i=1; i<=totalSlides; i++) {
-            data[i] = document.getElementById(`ex-input-${i}`).value;
+        try {
+            const data = { texts: {}, images: customImages };
+            for(let i=1; i<=totalSlides; i++) {
+                data.texts[i] = document.getElementById(`ex-input-${i}`).value;
+            }
+            localStorage.setItem(`savedData_${currentComp}`, JSON.stringify(data));
+            alert(`已成功保留 ${currentComp} 的草稿內容！`);
+        } catch(e) {
+            alert("保留失敗！可能是上傳的圖片檔案過大，超出了瀏覽器的儲存限制。建議您減少圖片數量或壓縮圖片後再試。");
         }
-        localStorage.setItem(`savedData_${currentComp}`, JSON.stringify(data));
-        alert(`已成功保留 ${currentComp} 的草稿內容！`);
     }
 
     function startExercise(imgSrc, compName) {
-        currentImg = imgSrc;
+        isFreeDesignMode = (imgSrc === 'custom');
+        currentImg = isFreeDesignMode ? '' : imgSrc;
         currentComp = compName;
+        customImages = {}; 
+
         document.getElementById('exercise-title').innerText = `${compName} - 紀念品設計簡報實作`;
         
+        // 如果是自由創作，隱藏底部參考區的解鎖功能與示範參考圖，避免干擾創意
+        const refBottom = document.getElementById('reference-bottom-area');
+        if(isFreeDesignMode) {
+            refBottom.querySelector('.lock-section').style.display = 'none';
+        } else {
+            refBottom.querySelector('.lock-section').style.display = 'flex';
+        }
+
         const savedRaw = localStorage.getItem(`savedData_${currentComp}`);
-        const savedData = savedRaw ? JSON.parse(savedRaw) : null;
+        let savedData = null;
+        if(savedRaw) {
+            try { savedData = JSON.parse(savedRaw); } catch(e){}
+        }
+        
+        // 載入儲存的自訂圖片
+        if(savedData && savedData.images && isFreeDesignMode) {
+            customImages = savedData.images;
+        }
 
         const inputsContainer = document.getElementById('exercise-inputs-container');
         inputsContainer.innerHTML = '';
@@ -677,17 +632,34 @@
         baseSteps.forEach((step, index) => {
             const stepNum = index + 1;
             let defaultText = "";
-            if (savedData && savedData[stepNum]) {
-                defaultText = savedData[stepNum];
+            if (savedData && savedData.texts && savedData.texts[stepNum]) {
+                defaultText = savedData.texts[stepNum];
             } else {
-                if(stepNum === 1) defaultText = `經理您好，關於公司要求設計宣傳${compName}形象的紀念品，我已準備好方案，現在向您匯報。\n\n`;
-                if(stepNum === 4) defaultText = `這是我的設計草圖（如附件草圖所示）。`;
+                if(stepNum === 1) defaultText = `經理您好，關於公司要求設計宣傳${isFreeDesignMode ? '我的品牌' : compName}形象的紀念品，我已準備好方案，現在向您匯報。\n\n`;
+                if(stepNum === 4) defaultText = `這是我的設計草圖（如簡報圖片所示）。`;
+            }
+
+            // 自由創作專用的圖片上傳介面
+            let uploadHtml = '';
+            if(isFreeDesignMode) {
+                const hasImg = customImages[stepNum] ? true : false;
+                uploadHtml = `
+                    <div style="margin-bottom: 12px; display:flex; align-items:center;">
+                        <label class="custom-upload-label">
+                            📁 上傳此頁圖片
+                            <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, ${stepNum})">
+                        </label>
+                        <span id="upload-status-${stepNum}" style="font-size: 12px; color: #27ae60; margin-left: 10px;">${hasImg ? '✅ 圖片已上傳' : ''}</span>
+                        <button onclick="removeImage(${stepNum})" id="remove-img-btn-${stepNum}" style="display:${hasImg ? 'inline-block' : 'none'}; font-size:12px; padding: 4px 8px; margin-left:8px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">刪除</button>
+                    </div>
+                `;
             }
 
             inputsContainer.innerHTML += `
                 <div class="exercise-step" id="ex-step-${stepNum}">
                     <h4>${step.title}</h4>
                     <div class="hint-text"><b>引導思考：</b>${step.q}<br>${step.hint}</div>
+                    ${uploadHtml}
                     <textarea id="ex-input-${stepNum}" onfocus="changeSlideTo(${stepNum})" oninput="updateSlidePreview()">${defaultText}</textarea>
                 </div>
             `;
@@ -704,15 +676,34 @@
         document.querySelector('.editor-panel').scrollTop = 0;
     }
 
+    // 處理自訂圖片上傳
+    function handleImageUpload(event, stepNum) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                customImages[stepNum] = e.target.result;
+                document.getElementById(`upload-status-${stepNum}`).innerText = '✅ 圖片已上傳';
+                document.getElementById(`remove-img-btn-${stepNum}`).style.display = 'inline-block';
+                if (currentSlideIndex === stepNum) updateSlidePreview();
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 刪除自訂圖片
+    function removeImage(stepNum) {
+        delete customImages[stepNum];
+        document.getElementById(`upload-status-${stepNum}`).innerText = '';
+        document.getElementById(`remove-img-btn-${stepNum}`).style.display = 'none';
+        if (currentSlideIndex === stepNum) updateSlidePreview();
+    }
+
     function changeSlideTo(num) {
         currentSlideIndex = num;
         updateSlidePreview();
-        
-        // 平滑捲動左側編輯區到對應位置
         const el = document.getElementById(`ex-step-${num}`);
-        if(el) {
-            el.scrollIntoView({behavior: "smooth", block: "center"});
-        }
+        if(el) { el.scrollIntoView({behavior: "smooth", block: "center"}); }
     }
 
     function changeSlide(direction) {
@@ -731,11 +722,21 @@
         document.getElementById('preview-content').innerText = textContent;
 
         const imgEl = document.getElementById('preview-image');
-        if ([4, 6, 7, 8].includes(currentSlideIndex)) {
-            imgEl.src = currentImg;
-            imgEl.style.display = 'block';
+        
+        if (isFreeDesignMode) {
+            if (customImages[currentSlideIndex]) {
+                imgEl.src = customImages[currentSlideIndex];
+                imgEl.style.display = 'block';
+            } else {
+                imgEl.style.display = 'none';
+            }
         } else {
-            imgEl.style.display = 'none';
+            if ([4, 6, 7, 8].includes(currentSlideIndex)) {
+                imgEl.src = currentImg;
+                imgEl.style.display = 'block';
+            } else {
+                imgEl.style.display = 'none';
+            }
         }
 
         document.getElementById('common-phrases').innerText = stepData.phrase;
@@ -757,14 +758,24 @@
         for(let i=1; i<=totalSlides; i++) {
             const stepData = baseSteps[i-1];
             const content = document.getElementById(`ex-input-${i}`).value;
-            const imgHtml = ([4, 6, 7, 8].includes(i)) ? `<img src="${currentImg}" class="slide-image">` : '';
+            
+            let imgHtml = '';
+            if (isFreeDesignMode) {
+                if (customImages[i]) {
+                    imgHtml = `<img src="${customImages[i]}" class="slide-image">`;
+                }
+            } else {
+                imgHtml = ([4, 6, 7, 8].includes(i)) ? `<img src="${currentImg}" class="slide-image">` : '';
+            }
+
+            const marginStyle = isMinimalist ? 'margin-left: 20px;' : '';
 
             finalContainer.innerHTML += `
                 <div class="slide-container ${selectedStyle}">
                     ${decorators}
-                    <div class="slide-title">${stepData.slideTitle}</div>
+                    <div class="slide-title" style="${marginStyle}">${stepData.slideTitle}</div>
                     ${imgHtml}
-                    <div class="slide-content">${content}</div>
+                    <div class="slide-content" style="${marginStyle}">${content}</div>
                 </div>
             `;
         }
